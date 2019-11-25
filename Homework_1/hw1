@@ -1,0 +1,104 @@
+--1.     Rename all the columns for eg.,
+--a)    TriAge to Age
+--b)    GenderCode to Gender
+--c)    ContactID to ID
+--d)    Address1Stateorprovince to State
+--e)    TriImagineCareenrollmentemailsentdate to EmailSentdate
+--f)    Trienrollmentcompletedate to Completedate
+
+SELECT*INTO [aabeysekara].[Demo_New1] FROM [Demographics]
+SELECT *
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME = 'aabeysekara.Demo_New1'
+ORDER BY ORDINAL_POSITION
+ALTER TABLE aabeysekara.Demo_New1
+DROP COLUMN Gender
+sp_rename 'aabeysekara.Demo_New1.tri_age', 'Age', 'COLUMN';
+sp_rename 'aabeysekara.Demo_New1.gendercode', 'Gender', 'COLUMN'
+sp_rename 'aabeysekara.Demo_New1.contactid', 'ID', 'COLUMN'
+sp_rename 'aabeysekara.Demo_New1.address1_stateorprovince', 'State', 'COLUMN'
+sp_rename 'aabeysekara.Demo_New1.tri_imaginecareenrollmentemailsentdate', 'EmailSentDate', 'COLUMN'
+sp_rename 'aabeysekara.Demo_New1.tri_enrollmentcompletedate', 'CompleteDate', 'COLUMN'
+--g)    Calculate the time (in days) to complete enrollment and create a new column to have this data
+SELECT * FROM aabeysekara.Demo_New1
+ALTER TABLE aabeysekara.Demo_New1
+ADD TimeToComplete Int 
+UPDATE aabeysekara.Demo_New1
+SET TimeToComplete= DATEDIFF(d, try_convert(date, EmailSentDate, 101), try_convert(date, CompleteDate, 101))
+
+--2.    Create a new column “Enrollment Status”
+--a)    Insert Status=Complete :code is 167410011
+--b)    Insert Status=Email sent :code is 167410001
+--c)    Insert Status=Non responder: Code is 167410004
+--d)    Insert Status=Facilitated Enrollment: Code  is 167410005
+--e)    Insert Status= Incomplete Enrollments: Code  is 167410002
+--f)    Insert Status= Opted Out: Code  is 167410003
+--g)    Insert Status= Unprocessed: Code  is 167410000
+--h)    Insert Status= Second email sent : Code  is 167410006
+
+ALTER TABLE aabeysekara.Demo_New1
+ADD Enrollment_Status nvarchar(99)
+UPDATE aabeysekara.Demo_New1
+SET Enrollment_Status= 'Complete'
+WHERE tri_imaginecareenrollmentstatus='167410011'
+UPDATE aabeysekara.Demo_New1
+SET Enrollment_Status='Email Sent'
+WHERE tri_imaginecareenrollmentstatus='167410001'
+UPDATE aabeysekara.Demo_New1
+SET Enrollment_Status='Non Responder'
+WHERE tri_imaginecareenrollmentstatus='167410004'
+UPDATE aabeysekara.Demo_New1
+SET Enrollment_Status='Facilitate Enrollment'
+WHERE tri_imaginecareenrollmentstatus='167410005'
+UPDATE aabeysekara.Demo_New1
+SET Enrollment_Status='Incomplete Enrollment'
+WHERE tri_imaginecareenrollmentstatus='167410002'
+UPDATE aabeysekara.Demo_New1
+SET Enrollment_Status='Opted Out'
+WHERE tri_imaginecareenrollmentstatus='167410003'
+UPDATE aabeysekara.Demo_New1
+SET Enrollment_Status='Unprocessed'
+WHERE tri_imaginecareenrollmentstatus='167410000'
+UPDATE aabeysekara.Demo_New1
+SET Enrollment_Status='Second Email Sent'
+WHERE tri_imaginecareenrollmentstatus='167410006'
+--3.    Create a new Column “Sex”
+--a)    Insert sex=female if code=2
+--b)    Insert sex=male if code=1
+--c)    Insert sex=other if code =167410000
+--d)    Insert sex=Unknown if code =’NULL’
+
+ALTER TABLE aabeysekara.Demo_New1
+ADD Sex nvarchar(50)
+UPDATE aabeysekara.Demo_New1
+SET Sex='Female'
+WHERE Gender='2'
+UPDATE aabeysekara.Demo_New1
+SET Sex='Male'
+WHERE Gender='1'
+UPDATE aabeysekara.Demo_New1
+SET Sex='Other'
+WHERE Gender='167410000'
+UPDATE aabeysekara.Demo_New1
+SET Sex='Unknown'
+WHERE Gender='NULL'
+
+--4.Create a new column “Age group” and create age groups with an interval of 25 yrs. for example 0-25 years as ‘0-25’, 26-50 as “26-50” and so on...
+
+ALTER TABLE aabeysekara.Demo_New1
+ADD Age_Group nvarchar(99)
+UPDATE aabeysekara.Demo_New1
+SET Age_Group='0-25'
+WHERE Age BETWEEN 0 AND 25
+UPDATE aabeysekara.Demo_New1
+SET Age_Group='26-50'
+WHERE Age BETWEEN 26 AND 50
+UPDATE aabeysekara.Demo_New1
+SET Age_Group='51-75'
+WHERE Age BETWEEN 51 AND 75
+UPDATE aabeysekara.Demo_New1
+SET Age_Group='76-100'
+WHERE Age BETWEEN 76 AND 100
+
+--Printing 10 Random rows
+SELECT Top 10 * FROM aabeysekara.Demo_New1 ORDER BY Age
