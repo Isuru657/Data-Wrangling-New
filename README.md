@@ -33,6 +33,7 @@ A few operations I did include:
 -Outlier checks.
 
 Final:
+
 I used both sql and r for the final. I had to use most of the datasets that I had already used earlier in class.
 The data wrangling operations I performed include:
 -Joining datasets.
