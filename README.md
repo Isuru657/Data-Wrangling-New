@@ -32,3 +32,10 @@ A few operations I did include:
 -Missing value treatment using Mean imputation and one hot encoding.
 -Outlier checks.
 
+Final:
+I used both sql and r for the final. I had to use most of the datasets that I had already used earlier in class.
+The data wrangling operations I performed include:
+-Joining datasets.
+-Obtaining summary statistics on some variables.
+-Filtering observations to include the most relevant.
+
